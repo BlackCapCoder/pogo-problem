@@ -1,4 +1,4 @@
-# The pogo problem
+# The Pogo Problem
 
     You are standing on a pogo stick at the surface of a circle with some integer circumferance (C).
     Some integer distance away from you (D) is a piece of candy.
