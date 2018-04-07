@@ -10,7 +10,7 @@ data NSeqPogo' = NSeqPogo' { c :: Int, d :: Int, ls :: [Int] }
 
 instance Problem NSeqPogo' where
   upperbound (NSeqPogo' c d ls)
-    = upperbound . Pogo c d $ sum ls
+    = (* length ls) . upperbound . Pogo c d $ sum ls
 
   -- brute (NSeqPogo' c d ls)
   --   | q <- length ls
