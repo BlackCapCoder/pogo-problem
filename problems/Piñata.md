@@ -8,7 +8,12 @@
 
 * `(C=10, L=2, P=1)` diverges.
 * `(C=10, L=7, P=3, H=9)`
-* I have checked all problems `0 <= P < L < C < 100`, and there are no solutions where `H > C`. I strongly believe this to be true for all problems.
+* `H < C`
+
+When you overshoot the edge of the circle you will have an overshot `0 <= O < L`. The only way to land on a candy is if `O ϵ [P, P+O % L']` where `O'` is the set of past overshots.
+It takes `C/L` jumps to get over the edge, so `H < C/L*L` or `H < C`
+
+--------
 
 This is a good time to mention BoolFuck, which is a language that is exactly like BrainFuck, except that it uses bits for memory rather than bytes. This fits better with my candy model. BrainFuck can be directly translated to BoolFuck like this:
 

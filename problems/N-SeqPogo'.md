@@ -4,5 +4,5 @@ This is a more restrictive version of [N-SeqPogo](N-SeqPogo.md). Like [N-SeqPogo
 
 * `(C=10, D=2, L=[7,2,9], H=12)`
 * `(C=10, D=2, L=[2,3])` diverges
-* `N-SeqPogo' == Pogo (sum L)`, but multiply H by N
+* `N-SeqPogo' == Pogo (sum L) * N`
 * `H < C*N`
