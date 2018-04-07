@@ -21,7 +21,8 @@ instance Problem NSeqPogo' where
   --   $ \a b -> mod (a+b) c
 
   brute (NSeqPogo' c d ls)
-    = brute . Pogo c d $ sum ls
+    = map (* length ls) . brute . Pogo c d $ sum ls
 
   clever (NSeqPogo' c d ls)
-    = clever . Pogo c d $ sum ls
+    = fmap (fmap (* length ls))
+    . clever . Pogo c d $ sum ls
