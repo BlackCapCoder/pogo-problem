@@ -8,9 +8,11 @@
 * `(C=10, D=1, L=2)` diverges.
 * `H < C`
 
-    let T be the number of times passed all the way around the circle
 
-    D = H*L - T*C
+```
+let T be the number of times passed all the way around the circle
+D = H*L - T*C
+```
 
 ### Decidability
 
