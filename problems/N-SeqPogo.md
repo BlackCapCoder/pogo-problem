@@ -8,6 +8,6 @@ The N-SeqPogo problem is a more restrictive version of the [N-Pogo problem](N-Po
 * `H < C*N`
 
 
-When jumping over the edge of the circle, that is, when the total length you have jumped (A) passes a multiple of C, let O be how much you overshot the edge by `O = C % A`.
+When jumping over the edge of the circle, that is, when the total length you have jumped `A` passes a multiple of `C`, let `O` be how much you overshot the edge by `O = A % C`.
 
 Because `O < C`, we can place an upper bound on `H` at `H < C*N`.
