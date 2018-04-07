@@ -1,6 +1,7 @@
 # Pogo
 
-The pogo problem is a problem that I discovered while working on an optimizing BrainFuck compiler; it is a simplified version of how loops work in BrainFuck.
+The pogo problem is a problem that I discovered while working on an optimizing BrainFuck compiler; it is a simplified model of how loops work in BrainFuck.
+
 This repository is my effort to optimize and expand on the pogo problem to see how close I can get to solving the halting problem.
 
 The pogo problem goes like this:
@@ -15,13 +16,13 @@ A simple example of an instance that diverges is `(C=10, D=1, L=2)`.
 
 ### Decidability
 
-The pogo problem is obviously decidable. All you have to do to prove divergence is to simulate C hops. If no solution is found after C hops it cannot exist as there are only C spots on the circle, and you would have to revisit a spot where you have already been. The pogo stick has no memory or internal state, so if it lands on a spot where it has already been it must be in an infinite loop. `H < C`
+The pogo problem is obviously decidable. All you have to do to prove divergence is to simulate `C` hops. If no solution is found after `C` hops it cannot exist as there are only `C` spots on the circle, and you would have to revisit a spot where you have already been. The pogo stick has no memory or internal state, so if it lands on a spot where it has already been it must be in an infinite loop. `H < C`
 
 This is true even if there are more than one piece of candy.
 
 ### N-Pogo
 
-Let N-Pogo be the decision problem for whether a pogo stick that can choose between N different jump lengths must diverge. N-pogo is still decidable as there are only a finite number of states that it can be in, where a state is defined as being in spot A and choosing jump length B. `H < C^N!`
+Let N-Pogo be the decision problem for whether a pogo stick that can choose between `N` different jump lengths must diverge. N-pogo is still decidable as there are only a finite number of states that it can be in, where a state is defined as being in spot A and choosing jump length B. `H < C^N!`
 
 1-Pogo is equivalent to the regular pogo problem, except that we only care about divergence.
 
