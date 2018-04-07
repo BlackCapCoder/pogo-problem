@@ -1,10 +1,14 @@
 module NSeqPogo where
 
+import Problem
 
-brute c d ls
-  = takeWhile (/=d)
-  . map fst
-  . flip iterate ( 0, cycle ls )
-  $ \(a, x:xs) -> (mod (a+x) c, xs)
 
-bruteH c d ls = length $ brute c d ls
+data NSeqPogo = NSeqPogo { c :: Int, d :: Int, ls :: [Int] }
+
+
+instance Problem NSeqPogo where
+  brute (NSeqPogo c d ls)
+    = takeWhile (/=d)
+    . map fst
+    . flip iterate ( 0, cycle ls )
+    $ \(a, x:xs) -> (mod (a+x) c, xs)

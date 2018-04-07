@@ -2,11 +2,10 @@
 module Piñata where
 
 import qualified Data.Map as M
-import Data.Function
 import Math.NumberTheory.Primes
-import System.Timeout
-import Control.Monad
-import Data.Maybe
+
+import Problem
+
 
 {-
 
@@ -22,49 +21,43 @@ Impossible problem: (C=10, L=2, P=1)
 
 -}
 
-brute c l p = flip fix (0,0, M.empty) $ \r (x,h,m) ->
-  let x' = mod (x+l) c
-      p' = mod (x+p) c
-      m' = if | Just _ <- M.lookup p' m -> M.update (pure . not) p' m
-              | otherwise -> M.insert p' True m
 
-  in if | Just True <- M.lookup x' m' -> (x',h+1,m')
-        | otherwise -> r (x',h+1,m')
-
-bruteH c l p | (_,h,_) <- brute c l p = h
+data Piñata = Piñata { c :: Int, l :: Int, p :: Int }
+            deriving (Eq, Ord, Show)
 
 
-brute' c l p = flip fix (0,0, M.empty) $ \r (x,h,m) ->
-  let x' = mod (x+l) c
-      p' = mod (x+p) c
-      m' = if | Just _ <- M.lookup p' m -> M.update (pure . not) p' m
-              | otherwise -> M.insert p' True m
+instance Problem Piñata where
+  upperbound = Just . c
 
-  in if | h > c -> Nothing
-        | Just True <- M.lookup x' m' -> Just (x',h+1,m')
-        | otherwise -> r (x',h+1,m')
+  brute Piñata{c=c, l=l, p=p}
+    = map (const 0)
+    . takeWhile (\(b, _, _) -> not b)
+    . flip iterate (False, 0, M.empty)
+    $ \(b, x, m) ->
+      let x' = mod (x+l) c
+          p' = mod (x+p) c
+          m' = if | Just _ <- M.lookup p' m -> M.update (pure . not) p' m
+                  | otherwise -> M.insert p' True m
 
-bruteH' c l p = do (_,h,_) <- brute' c l p; return h
+      in if | Just b' <- M.lookup x' m' -> (b', x', m')
+            | otherwise -> (False, x', m')
+
+  clever Piñata{c=c, l=l, p=p}
+    | p == l = Right $ Just 1
+    | l == 0 = Right Nothing
+    | m == 0, p /= 0 = Right Nothing
+    | x /= 1, p == 0 = Right . Just $ div c x
+    | mod p o == 0, p >= o = Right . Just $ (d+1) * div (mod p c) o
+    | otherwise = Left ()
+    where x = gcd c l
+          (d,m) = divMod c l
+          o = l - m
 
 
-clever :: Int -> Int -> Int -> Either () (Maybe Int)
-clever c l p
-  | p == l = Right $ Just 1
-  | l == 0 = Right Nothing
-  | m == 0, p /= 0 = Right Nothing
-  | x /= 1, p == 0 = Right . Just $ div c x
-  | mod p o == 0, p >= o = Right . Just $ (d+1) * div (mod p c) o
-  | otherwise = Left ()
- where x = gcd c l
-       (d,m) = divMod c l
-       o = l - m
+instance Enum Piñata where
+  toEnum i
+    | (c,l,p) <- [ (c,l,p) | c <- [1..], l <- [1..c-1], p <- [0..l-1] ] !! i
+    = Piñata c l p
 
+  fromEnum = undefined
 
-check c l p = (bruteH c l p, clever c l p)
-
-getO c l = l - mod c l
-
-brutes n = fmap catMaybes
-         . forM (take n [ (c,l,p) | c <- [1..], l <- [1..c-1], p <- [0..l-1] ])
-         $ \(c,l,p) ->
-  timeout 100 $ fmap (c<) . return $! bruteH c l p

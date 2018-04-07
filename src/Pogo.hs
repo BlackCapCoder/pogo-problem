@@ -1,7 +1,9 @@
 {-# LANGUAGE MonadComprehensions #-}
 module Pogo where
 
+import Problem
 import Debug.Trace
+
 
 {- This is a simplified version of the scan problem.
 
@@ -28,6 +30,19 @@ D = H*L - T*C       you land on the candy after H hops takes you T times around 
 D = H*L (modulo C)  another way to express the same, without caring about specific T
 
 -}
+
+
+data Pogo = Pogo { c :: Int, d :: Int, l :: Int }
+
+
+instance Problem Pogo where
+  upperbound = Just . c
+
+  brute Pogo{c=c, d=d, l=l}
+    = takeWhile (/=d) $ iterate ((`mod`c).(+l)) 0
+
+
+----- Old code below -----
 
 simPogo c d l = takeWhile (/=d) $ iterate ((`mod`c).(+l)) 0
 

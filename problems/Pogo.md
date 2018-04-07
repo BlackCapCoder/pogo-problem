@@ -8,14 +8,13 @@
 * `(C=10, D=1, L=2)` diverges.
 * `H < C`
 
+    let T be the number of times passed all the way around the circle
+
+    D = H*L - T*C
+
 ### Decidability
 
 The pogo problem is obviously decidable. All you have to do to prove divergence is to simulate `C` hops. If no solution is found after `C` hops it cannot exist as there are only `C` spots on the circle, and you would have to revisit a spot where you have already been. The pogo stick has no memory or internal state, so if it lands on a spot where it has already been it must be in an infinite loop.
 
 This is true even if there are more than one piece of candy.
 
-------
-
-    let T be the number of times passed all the way around the circle
-
-    D = H*L - T*C
