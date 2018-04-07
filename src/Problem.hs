@@ -33,7 +33,7 @@ class Problem a where
         Left _  -> brute' a
 
 
--- Vertify that clever == brute
+-- Vertify that clever == brute, give up after t time
 vertify :: (Problem a) => Int -> a -> IO (Either () Bool)
 vertify t a = do
   r <- timeout t . return $! brute' a
