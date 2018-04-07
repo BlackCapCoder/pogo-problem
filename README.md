@@ -9,4 +9,4 @@ Descriptions of the problems in plain English can be found in the [problems](pro
 
 ## Vocabulary
 
-* All of the problems can not have a solution. If this is the case I say that it diverges.
+* All of the problems can not have a solution. If this is the case I say that it `diverges`.
