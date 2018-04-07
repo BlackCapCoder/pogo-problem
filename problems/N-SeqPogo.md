@@ -4,3 +4,6 @@ The N-SeqPogo problem is a more restrictive version of the [N-Pogo problem](N-Po
 
 * `(C=10, D=1, L=[2,1], H=7)`
 * `(C=10, D=1, L=[2,2,1])` diverges.
+* 1-SeqPogo == Pogo
+* Unlike [pogo](Pogo.md) and [piñata](Piñata.md), `H < C` is not true. One example is `(C=10, D=1, L=[2,2,2, 2,2,2, 1], H=11)`.
+
