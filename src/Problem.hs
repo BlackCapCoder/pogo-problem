@@ -63,7 +63,8 @@ instance (Reducible a b, Problem a, Problem b) => Problem (Iso a b) where
   clever (Iso a)
     = fromRight (clever $ reduce a) $ pure <$> clever a
 
-  brute = brute . reduce . unIso
+  brute  = brute  . reduce . unIso
+  brute' = brute' . reduce . unIso
 
 
 -- Vertify that the problem is really isomorphic

@@ -41,7 +41,7 @@ instance Problem Pogo where
     = takeWhile (/=d) $ iterate ((`mod`c).(+l)) 0
 
   -- Worst case O(c)
-  brute' (Pogo c d l)
+  brute' p@(Pogo c d l)
     | l < 0 = brute' $ Pogo c (c-d) (-l)
     | d < 0 = brute' $ Pogo c (c+d) l
     | l > c = brute' $ Pogo c d $ mod l c
@@ -56,10 +56,12 @@ instance Problem Pogo where
 
           -- How much i overshot the edge by
           o = mod (l*z+l) c
+          Just u = upperbound p
 
           -- Exhaustively search all future overshots
           os = [ (t, getH c d l t)
-               | (t, x) <- zip [1..]
+               | (t, x) <- takeWhile ((<=u) . fst)
+                         $ zip [1..]
                          $ takeWhile (/=0)
                          [ mod (o*n) l | n <- [1..] ]
                , mod (d-x) l == 0 ]
