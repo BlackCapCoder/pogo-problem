@@ -5,12 +5,22 @@ import Pogo (Pogo (..))
 import Data.List
 
 
-data NSeqPogo' = NSeqPogo' { c :: Int, d :: Int, ls :: [Int] }
-
+data NSeqPogo' = NSeqPogo'
+  { c :: Int -- Circle circumference
+  , d :: Int -- Distance to candy
+  , s :: Int -- Sum of jump lengths
+  , n :: Int -- Number of jumps in the sequence
+  }
 
 instance Problem NSeqPogo' where
-  upperbound (NSeqPogo' c d ls)
-    = (* length ls) . upperbound . Pogo c d $ sum ls
+  upperbound (NSeqPogo' c d s n)
+    = (*n) <$> upperbound (Pogo c d s)
+
+  brute (NSeqPogo' c d s n)
+    = (*n) <$> brute (Pogo c d s)
+
+  clever (NSeqPogo' c d s n)
+    = fmap (*n) <$> clever (Pogo c d s)
 
   -- brute (NSeqPogo' c d ls)
   --   | q <- length ls
@@ -19,10 +29,3 @@ instance Problem NSeqPogo' where
   --   . zip [0..]
   --   . flip scanl1 (0 : cycle ls)
   --   $ \a b -> mod (a+b) c
-
-  brute (NSeqPogo' c d ls)
-    = map (* length ls) . brute . Pogo c d $ sum ls
-
-  clever (NSeqPogo' c d ls)
-    = fmap (fmap (* length ls))
-    . clever . Pogo c d $ sum ls

@@ -14,6 +14,11 @@ let T be the number of times passed all the way around the circle
 D = H*L - T*C
 ```
 
+Pogo can be translated to [N-SeqPiñata'](N-SeqPiñata'.md) by undoing the candy drop:
+
+    Pogo (C, D, L) = 2-SeqPiñata' (C, [(L=C, P=D-1), (L=D, P=D-1)]) / 2
+
+
 ### Decidability
 
 The pogo problem is obviously decidable. All you have to do to prove divergence is to simulate `C` hops. If no solution is found after `C` hops it cannot exist as there are only `C` spots on the circle, and you would have to revisit a spot where you have already been. The pogo stick has no memory or internal state, so if it lands on a spot where it has already been it must be in an infinite loop.

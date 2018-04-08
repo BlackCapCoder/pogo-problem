@@ -17,9 +17,6 @@ The pogo difficulty is the kind of pogo problem that a particular BoolFuck loop 
 [>>>]    Pogo
 [>!>]    Piñata
 [!>!>>]  2-SeqPiñata'
-
-[ [>>>] [>> ] ]  2-SeqPogo
-[ [>!>] [!>>] ]  2-SeqPiñata
 ```
 
 -------
