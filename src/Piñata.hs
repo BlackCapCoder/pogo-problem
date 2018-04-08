@@ -21,10 +21,6 @@ import Data.List (find)
   If a candy lands on another candy they annihilate each other and emit a photon.
   Will you ever land on a candy, and if so, how many jumps (H) will it take?
 
-0 <= P <= L <= C
-
-Impossible problem: (C=10, L=2, P=1)
-
 -}
 
 
@@ -45,7 +41,7 @@ instance Enum Piñata where
     where f n = div (n*(n+1)*(n+2)) 6
           g n = div (n*(n+1)      ) 2
 
-instance Isomorphic Piñata Pogo where
+instance Reducible Piñata Pogo where
   reduce (Piñata c l p) = Pogo c p l
   -- vertifyIso' fails when p=0
 
