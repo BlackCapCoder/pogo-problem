@@ -5,12 +5,12 @@ import Problem
 import Debug.Trace
 
 
-{- This is a simplified version of the scan problem.
+{-
 
-I am standing on a pogo stick at the surface of a circle with an integer circumference C.
-An integer distance away from me D is a piece of candy.
-My pogo stick can only jump in one direction, and only some specific integer length L.
-If I were to pogo forever, would I ever land on the candy, and if so, how many jumps would it take?
+  I am standing on a pogo stick at the surface of a circle with an integer circumference C.
+  An integer distance away from me D is a piece of candy.
+  My pogo stick can only jump in one direction, and only some specific integer length L.
+  If I were to pogo forever, would I ever land on the candy, and if so, how many jumps would it take?
 
 Examples:
   (C=10, D=1, L=2) -> impossible
@@ -40,44 +40,35 @@ instance Problem Pogo where
   brute (Pogo c d l)
     = takeWhile (/=d) $ iterate ((`mod`c).(+l)) 0
 
+  -- Worst case O(c)
   brute' (Pogo c d l)
-    = (\(_,_,_,h,_) -> h) <$> solvePogo c d l
+    | l < 0 = brute' $ Pogo c (c-d) (-l)
+    | d < 0 = brute' $ Pogo c (c+d) l
+    | l > c = brute' $ Pogo c d $ mod l c
+
+    | y == 0          = Just x
+    | cm == 0         = Nothing
+    | ((_,h):_) <- os = Just h
+    | otherwise       = Nothing
+
+    where (x,y)  = divMod d l
+          (z,cm) = divMod c l
+
+          -- How much i overshot the edge by
+          o = mod (l*z+l) c
+
+          -- Exhaustively search all future overshots
+          os = [ (t, getH c d l t)
+               | (t, x) <- zip [1..]
+                         $ takeWhile (/=0)
+                         [ mod (o*n) l | n <- [1..] ]
+               , mod (d-x) l == 0 ]
 
 
 ----- Old code below -----
 
-simPogo c d l = takeWhile (/=d) $ iterate ((`mod`c).(+l)) 0
-
-solvePogoBrute c d l
-  | h <- length $ simPogo c d l
-  = (c, d, l, h, getT c d l h)
-
 getT c d l h = div (h*l-d) c
 getH c d l t = div (d+t*c) l
-
--- Worst case: O(c)
-solvePogo c d l
-  | l  < 0 = solvePogo c (c-d) (-l)
-  | d  < 0 = solvePogo c (c+d) l
-  | l  > c = solvePogo c d $ mod l c
-
-  | y  == 0 = Just (c,d,l,x, getT c d l x)
-  | cm == 0 = Nothing
-  | ((t,h):_) <- os = Just (c,d,l,h,t)
-  | otherwise = Nothing
-  where (x,y)  = divMod d l
-        (z,cm) = divMod c l
-
-        -- How much i overshot the edge by
-        o = mod (l*z+l) c
-
-        -- Exhaustively search all future overshots
-        os = [ (t, getH c d l t)
-             | (t, x) <- zip [1..] $ takeWhile (/=0) [ mod (o*n) l | n <- [1..] ]
-             , {- trace (show (x,t)) $ -} mod (d-x) l == 0 ]
-
-pogo c d l = [ h | (_,_,_,h,_) <- solvePogo c d l ]
-
 
 -- Only works when l<d
 -- Somehow GHC optimizes the first one to be faster than this
