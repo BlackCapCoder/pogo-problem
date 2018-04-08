@@ -20,7 +20,7 @@ The pogo difficulty is the kind of pogo problem a particular BoolFuck loop trans
 
 -------
 
-BrainFuck can be directly translated to BoolFuck by using the substitutions in the table below:
+BrainFuck can be directly translated to BoolFuck by using the substitutions in the table below (IO has been omitted as it is not required for turing-completeness):
 
 | BrainFuck | BoolFuck                                                  |
 |-----------|-----------------------------------------------------------|
