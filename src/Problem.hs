@@ -4,6 +4,7 @@ module Problem where
 import System.Timeout
 import Control.Monad
 import Data.Either
+import Data.List (transpose)
 
 
 class Problem a where
@@ -32,7 +33,6 @@ class Problem a where
         Right x -> x
         Left _  -> brute' a
 
-
 -- Vertify that clever == brute, give up after t time
 vertify :: (Problem a) => Int -> a -> IO (Either () Bool)
 vertify t a = do
@@ -44,3 +44,25 @@ vertify t a = do
 
 vertifys :: (Problem a, Traversable t) => Int -> t a -> IO Bool
 vertifys t as = all (fromRight True) <$> forM as (vertify t)
+
+
+------------
+
+newtype Iso a b = Iso { unIso :: a }
+
+class Isomorphic a b | a -> b where
+  reduce :: a -> b
+
+instance (Isomorphic a b, Problem b) => Problem (Iso a b) where
+  upperbound = upperbound . reduce . unIso
+  brute      = brute      . reduce . unIso
+  clever     = clever     . reduce . unIso
+
+-- Vertify that the problem is really isomorphic
+vertifyIso :: (Problem a, Problem b, Isomorphic a b) => a -> Bool
+vertifyIso a = solve a == solve (Iso a)
+
+-- Vertify all possible problems
+vertifyIso' a
+  = all vertifyIso . join $ transpose [[a, pred a ..], [succ a..]]
+

@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiWayIf, LambdaCase, TupleSections #-}
+{-# LANGUAGE MultiWayIf, LambdaCase, MultiParamTypeClasses #-}
 module Piñata where
 
 import qualified Data.Map as M
@@ -9,6 +9,8 @@ import Control.Monad
 import Data.Maybe
 
 import Problem
+import Pogo (Pogo (Pogo))
+import Data.List (find)
 
 
 {-
@@ -28,6 +30,24 @@ Impossible problem: (C=10, L=2, P=1)
 
 data Piñata = Piñata { c :: Int, l :: Int, p :: Int }
             deriving (Eq, Ord, Show)
+
+-- GHC optimizes away the find, woo!
+instance Enum Piñata where
+  toEnum i
+    | Just c <- pred <$> find ((>i).f) [0..]
+    , Just l <- find ((>(i-f c)).g) [0..]
+    = Piñata (c+2) l (i - f c - g (l-1))
+    where f n = div (n*(n+1)*(n+2)) 6
+          g n = div (n*(n+1)      ) 2
+
+  fromEnum (Piñata c l p)
+    = f (c-2) + g (l-1) + p
+    where f n = div (n*(n+1)*(n+2)) 6
+          g n = div (n*(n+1)      ) 2
+
+instance Isomorphic Piñata Pogo where
+  reduce (Piñata c l p) = Pogo c p l
+  -- vertifyIso' fails when p=0
 
 
 instance Problem Piñata where
@@ -56,29 +76,3 @@ instance Problem Piñata where
     where x = gcd c l
           (d,m) = divMod c l
           o = l - m
-
-
-instance Enum Piñata where
-  toEnum i
-    | (c,l,p) <- [ (c,l,p) | c <- [1..], l <- [1..c-1], p <- [0..l-1] ] !! i
-    = Piñata c l p
-
-  fromEnum = undefined
-
-
-pin x@(Piñata c l p) =
-  let Just u = upperbound x
-      bs = take u $ brute x
-  in  if length bs == u then Nothing else Just $ mod (l + last bs) c
-
-vertifyPin t a = do
-  -- r <- timeout t . return $! pin a
-  r <- pure . return $! pin a
-
-  return $ case r of
-    Just x -> (p a ==) <$> x
-    _      -> Nothing
-
-vertifyPins t n = do
-  xs <- forM (toEnum <$> [0..n]) $ vertifyPin t
-  return $ and $ catMaybes xs

@@ -14,10 +14,6 @@ let T be the number of times passed all the way around the circle
 D = H*L - T*C
 ```
 
-~~Pogo can be translated to [2-SeqPiñata'](N-SeqPiñata'.md) by undoing the candy drop:~~
-
-    Pogo (C, D, L) = 2-SeqPiñata' (C, [(L=C, P=D-1), (L=D, P=D-1)]) / 2
-
 
 ### Decidability
 
