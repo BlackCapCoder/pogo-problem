@@ -1,10 +1,11 @@
-{-# LANGUAGE FunctionalDependencies, MultiWayIf #-}
+{-# LANGUAGE FunctionalDependencies #-}
 module Problem where
 
-import System.Timeout
+import Control.Applicative
 import Control.Monad
-import Data.Either
-import Data.List (transpose)
+import Data.Either    (fromRight)
+import Data.List      (transpose)
+import System.Timeout (timeout)
 
 
 class Problem a where
@@ -16,11 +17,10 @@ class Problem a where
 
   -- Referance implementation, but limit to upperbound if set
   brute' :: a -> Maybe Int
-  brute' a
-    | Just u <- upperbound a
-    , l      <- length . take (u+1) $ brute a
-    = if l > u then Nothing else Just l
-    | otherwise = Just . length $ brute a
+  brute' a = do
+    u <- upperbound a <|> pure maxBound
+    let l = length . take (u+1) $ brute a
+    guard (l <= u) >> pure l
 
   -- Actually solve it using math and stuff
   clever :: a -> Either () (Maybe Int)
@@ -28,10 +28,7 @@ class Problem a where
 
   -- Solve cleverly, fallback to referance
   solve :: a -> Maybe Int
-  solve a
-    = case clever a of
-        Right x -> x
-        Left _  -> brute' a
+  solve a = fromRight (brute' a) $ clever a
 
 
 -----------
