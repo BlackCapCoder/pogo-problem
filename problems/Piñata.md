@@ -14,16 +14,3 @@ When jumping over the edge of the circle, that is, when the total length you hav
 
 The only way to land on a candy is if `O ϵ [P, P+O' % L]` where `O'` is the set of past overshots. It takes `C/L` jumps to get over the edge and there are `L` ways to overshoot, so `H < C/L*L` or `H < C`.
 
---------
-
-This is a good time to mention BoolFuck, which is a language that is exactly like BrainFuck, except that it uses bits for memory rather than bytes. This fits better with my candy model. BrainFuck can be directly translated to BoolFuck like this:
-
-| BrainFuck | BoolFuck                                                  |
-|-----------|-----------------------------------------------------------|
-| `+`       | `>[>]!<[!<]>>>>>>>>>[!]<<<<<<<<<`                         |
-| `-`       | `>>>>>>>>>!<<<<<<<<![>!]<[<]>>>>>>>>>[!]<<<<<<<<<`        |
-| `<`       | `<<<<<<<<<`                                               |
-| `>`       | `>>>>>>>>>`                                               |
-| `[`       | `>>>>>>>>>!<<<<<<<<![>!]<[<]>>>>>>>>>[!<<<<<<<<[>]!<[!<]` |
-| `]`       | `>>>>>>>>>!<<<<<<<<![>!]<[<]>>>>>>>>>]<[!<]`              |
-
