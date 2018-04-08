@@ -42,24 +42,23 @@ instance Problem Pogo where
 
   -- Worst case O(l % c)
   brute' p@(Pogo c d l)
-    | l < 0 = brute' $ Pogo c (c-d) (-l)
-    | d < 0 = brute' $ Pogo c (c+d) l
-    | l > c = brute' $ Pogo c d $ mod l c
+    | l < 0 = brute' p { d=c-d, l = -l }
+    | d < 0 = brute' p { d=c+d }
+    | l > c = brute' p { l=mod l c }
 
-    | y == 0          = Just x
-    | cm == 0         = Nothing
-    | ((_,h):_) <- os = Just h
-    | otherwise       = Nothing
+    | y == 0      = Just x
+    | cm == 0     = Nothing
+    | (h:_) <- os = Just h
+    | otherwise   = Nothing
 
     where (x,y)  = divMod d l
           (z,cm) = divMod c l
 
           -- How much i overshot the edge by
           o = mod (l*z+l) c
-          Just u = upperbound p
 
           -- Exhaustively search all future overshots
-          os = [ (t, getH c d l t)
+          os = [ getH c d l t
                | (t, x) <- zip [1..]
                          $ takeWhile (/=0)
                          [ mod (o*n) l | n <- [1..] ]

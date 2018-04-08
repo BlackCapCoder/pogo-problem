@@ -18,7 +18,7 @@ class Problem a where
   -- Referance implementation, but limit to upperbound if set
   brute' :: a -> Maybe Int
   brute' a = do
-    u <- upperbound a <|> pure maxBound
+    u <- upperbound a <|> pure (maxBound-1)
     let l = length . take (u+1) $ brute a
     guard (l <= u) >> pure l
 
