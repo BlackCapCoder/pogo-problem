@@ -16,4 +16,4 @@ When jumping over the edge of the circle, that is, when the total length you hav
 
 The only way to land on a candy is if `O ϵ [P, P+O' % L]` where `O'` is the set of past overshots. It takes `C/L` jumps to get over the edge and there are `L` ways to overshoot, so `H < C/L*L` or `H < C`.
 
-This also implies that `H*L % C = P`, which means that `H = Pogo(C=C, D=P, L=L)`.
+This also shows that `H*L % C = P`, which means that `H = Pogo(C=C, D=P, L=L)`. In other words, Piñata is a more restricted Pogo where `D < L`.
