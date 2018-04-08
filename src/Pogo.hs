@@ -40,7 +40,7 @@ instance Problem Pogo where
   brute (Pogo c d l)
     = takeWhile (/=d) $ iterate ((`mod`c).(+l)) 0
 
-  -- Worst case O(c)
+  -- Worst case O(l % c)
   brute' p@(Pogo c d l)
     | l < 0 = brute' $ Pogo c (c-d) (-l)
     | d < 0 = brute' $ Pogo c (c+d) l
@@ -60,8 +60,7 @@ instance Problem Pogo where
 
           -- Exhaustively search all future overshots
           os = [ (t, getH c d l t)
-               | (t, x) <- takeWhile ((<=u) . fst)
-                         $ zip [1..]
+               | (t, x) <- zip [1..]
                          $ takeWhile (/=0)
                          [ mod (o*n) l | n <- [1..] ]
                , mod (d-x) l == 0 ]
