@@ -4,6 +4,10 @@ module Piñata where
 import qualified Data.Map as M
 import Math.NumberTheory.Primes
 
+import System.Timeout
+import Control.Monad
+import Data.Maybe
+
 import Problem
 
 
@@ -30,7 +34,7 @@ instance Problem Piñata where
   upperbound = Just . c
 
   brute Piñata{c=c, l=l, p=p}
-    = map (const 0)
+    = map (\(_,x,_) -> x)
     . takeWhile (\(b, _, _) -> not b)
     . flip iterate (False, 0, M.empty)
     $ \(b, x, m) ->
@@ -61,3 +65,20 @@ instance Enum Piñata where
 
   fromEnum = undefined
 
+
+pin x@(Piñata c l p) =
+  let Just u = upperbound x
+      bs = take u $ brute x
+  in  if length bs == u then Nothing else Just $ mod (l + last bs) c
+
+vertifyPin t a = do
+  -- r <- timeout t . return $! pin a
+  r <- pure . return $! pin a
+
+  return $ case r of
+    Just x -> (p a ==) <$> x
+    _      -> Nothing
+
+vertifyPins t n = do
+  xs <- forM (toEnum <$> [0..n]) $ vertifyPin t
+  return $ and $ catMaybes xs
