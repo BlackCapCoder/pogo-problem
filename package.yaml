@@ -26,3 +26,28 @@ library:
   dependencies:
   - containers
   - arithmoi
+  - lens
+  ghc-options:
+  - -fno-warn-partial-type-signatures
+  default-extensions:
+  - MonadComprehensions
+  - LambdaCase
+  - MultiWayIf
+  - ViewPatterns
+  - MultiParamTypeClasses
+  - FunctionalDependencies
+  - TypeFamilies
+  - TupleSections
+  - ScopedTypeVariables
+  - RecursiveDo
+  - StandaloneDeriving
+  - EmptyCase
+  - DoAndIfThenElse
+  - NondecreasingIndentation
+  - ApplicativeDo
+  - ConstrainedClassMethods
+  - NamedFieldPuns
+  - RecordWildCards
+  - ParallelListComp
+  - PartialTypeSignatures
+  - TransformListComp

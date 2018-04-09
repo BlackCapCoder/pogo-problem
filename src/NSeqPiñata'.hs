@@ -1,8 +1,9 @@
-{-# LANGUAGE MultiWayIf, LambdaCase #-}
 module NSeqPiñata' where
 
 import qualified Data.Map as M
 import Math.NumberTheory.Primes
+import Data.Maybe
+import Control.Lens
 
 import Problem
 
@@ -11,21 +12,23 @@ data NSeqPiñata
   = NSeqPiñata' { c :: Int, js :: [(Int, Int)] } -- (l, p)
   deriving (Eq, Ord, Show)
 
-
 instance Problem NSeqPiñata where
-  brute NSeqPiñata'{c=c, js=js}
+  brute NSeqPiñata'{..}
     | l <- length js
-    = map (\(_,(_,x,_,_)) -> x)
-    . takeWhile (\(i, (b, _, _, _)) -> not $ b && mod i l == 0 )
+    = map (\x -> snd x^._2)
+    . takeWhile (\(i, b) -> not $ b^._1 && i%l == 0 )
     . zip (cycle [0..l])
     . flip iterate (False, 0, M.empty, cycle js)
     $ \(b, x, m, (l,p):js) ->
-      let x' = mod (x+l) c
-          p' = mod (x+p) c
-          m' = if | Just _ <- M.lookup p' m -> M.update (pure . not) p' m
-                  | otherwise -> M.insert p' True m
+      let x' = x+l % c
+          p' = x+p % c
+          m' = M.insert p' (fromMaybe True $ not <$> M.lookup p' m) m
+      in (fromMaybe False $ M.lookup x' m', x', m', js)
 
-      in if | Just b' <- M.lookup x' m' -> (b', x', m', js)
-            | otherwise -> (False, x', m', js)
-
+  clever NSeqPiñata'{..}
+    | c % sl == 0, 0 `notElem` p = Right Nothing
+    | otherwise = Left ()
+    where l = map fst js
+          p = map snd js
+          sl = sum l
 

@@ -1,8 +1,6 @@
-{-# LANGUAGE MonadComprehensions #-}
 module Pogo where
 
 import Problem
-import Debug.Trace
 
 
 {-
@@ -37,16 +35,16 @@ data Pogo = Pogo { c :: Int, d :: Int, l :: Int }
 instance Problem Pogo where
   upperbound = Just . c
 
-  brute (Pogo c d l)
-    = takeWhile (/=d) $ iterate ((`mod`c).(+l)) 0
+  brute Pogo{..}
+    = takeWhile (/=d) $ iterate ((%c).(+l)) 0
 
   -- Worst case O(l % c)
-  brute' p@(Pogo c d l)
+  brute' p@Pogo{..}
     | l < 0 = brute' p { d=c-d, l = -l }
     | d < 0 = brute' p { d=c+d }
-    | l > c = brute' p { l=mod l c }
+    | l > c = brute' p { l=l%c }
 
-    | y == 0      = Just x
+    | y  == 0     = Just x
     | cm == 0     = Nothing
     | (h:_) <- os = Just h
     | otherwise   = Nothing
@@ -55,96 +53,16 @@ instance Problem Pogo where
           (z,cm) = divMod c l
 
           -- How much i overshot the edge by
-          o = mod (l*z+l) c
+          o = l*z+l % c
 
           -- Exhaustively search all future overshots
           os = [ getH c d l t
-               | (t, x) <- zip [1..]
-                         $ takeWhile (/=0)
-                         [ mod (o*n) l | n <- [1..] ]
-               , mod (d-x) l == 0 ]
+               | t <- [1..]
+               , x <- [o*t % l]
+               , then takeWhile by x/=0
+               , d-x % l == 0 ]
 
-
------ Old code below -----
 
 getT c d l h = div (h*l-d) c
 getH c d l t = div (d+t*c) l
 
--- Only works when l<d
--- Somehow GHC optimizes the first one to be faster than this
-solvePogo' c d l
-  | l  < 0 = solvePogo' c (c-d) (-l)
-  | d  < 0 = solvePogo' c (c+d) l
-  | l  > c = solvePogo' c d $ mod l c
-
-  | y  == 0 = Just (c,d,l,x, getT c d l x)
-  | cm == 0 = Nothing
-  | Just t <- seekDown 1 = Just (c,d,l,getH c d l t,t)
-  | ((t,h):_) <- seek2 = Just (c,d,l,h,t)
-  | otherwise = Nothing
-  where (x,y)  = divMod d l
-        (z,cm) = divMod c l
-
-        -- How much i overshot the edge by
-        o = mod (l*z+l) c
-
-        -- Only checks the first item in falling sequences of overshoots.
-        -- This still has a worst case performance of O(c), but a much better average case
-        -- (except that GHC is a beast, and it turns out this runs slower in practice,
-        -- despite doing less operations)
-        seekDown t
-          | x == d = Just t
-          | d == x-n*cm = Just $ t + n
-          | mod x cm == 0 = Nothing
-          | otherwise = trace (show (x,t)) $ seekDown $ t + 1 + div x cm
-          where x = mod (o*t) l
-                n = div (x-d) cm
-
-        -- I'm not even sure what I am doing at this point.
-        -- I think it has the potential to become O(log n)
-        seek2
-          = [ (t, getH c d l t)
-            | t <- [0..cnt-1]
-            , x <- pure $ o + mod (t*s) cnt
-            , x-cm*div (x-d) cm==d ]
-          where cnt = l-o
-                s   = mod o (mod l o)
-
-seeksim c d l = [ (t, div t m, t-d-m*div (t-d) m, s)
-                | i <- [0..cnt-1]
-                , t <- pure $ o + mod (i*s) cnt
-                ]
-  where (z,m) = divMod c l
-        o = mod (l*z+l) c
-        cnt = l-o
-        s = mod o (mod l o)
--- , mod (s*7) l
-
-{-
-  x = o + mod (i*s) cnt
-
-  d = -m*floor((t-d)/m) + t - d
-  d = m*ceiling((d - t)/m) + t
--}
-
-
-checkA d t o l = mod (d - mod (o*t) l) l == 0
-checkB d t o l = d - t*o - l * div (d-t*o) l == 0
-checkC d t o l = l * div (d-o*t) l + o*t == d
-
-{-
-D = h*l - t*c = (h*l - c*floor((h*l)/c)) = l*floor((d - o*t)/l) + o*t
-T = (h*l-d)/c = (floor((h*l)/c)) = floor(d/c + t)
-H = (d+t*c)/l = (c*floor(d/c + t))/l + d/l
-L = (d+t*c)/h = -c*floor(d/c + t) + c*t + d
-C = (h*l-d)/t = (h*(h*l - ((h*l - d)*floor((h*l*t)/(h*l - d)))/t))/t - d/t
-o = l*floor(c/l) - c*floor((floor(c/l)*l)/c + l/c) + l
-0 = d - t*o - l * floor((d-t*o)/l)
-d = l*floor((d - o*t)/l) + o*t
--}
-
-overs (x:xs)
-  = map head
-  . tail
-  . snd
-  $ foldr (\x (i, l:ls) -> if i>x then (x, (x:l):ls) else (x, [x]:l:ls) ) (x, [[x]]) xs

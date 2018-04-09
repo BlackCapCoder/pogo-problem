@@ -1,8 +1,9 @@
-{-# LANGUAGE MultiWayIf, LambdaCase #-}
 module NSeqPiñata where
 
 import qualified Data.Map as M
 import Math.NumberTheory.Primes
+import Data.Maybe
+import Control.Lens
 
 import Problem
 
@@ -13,15 +14,12 @@ data NSeqPiñata
 
 
 instance Problem NSeqPiñata where
-  brute NSeqPiñata{c=c, js=js}
+  brute NSeqPiñata{..}
     = map (const 0)
-    . takeWhile (\(b, _, _, _) -> not b)
+    . takeWhile (\q -> not $ q^._1)
     . flip iterate (False, 0, M.empty, cycle js)
     $ \(b, x, m, (l,p):js) ->
-      let x' = mod (x+l) c
-          p' = mod (x+p) c
-          m' = if | Just _ <- M.lookup p' m -> M.update (pure . not) p' m
-                  | otherwise -> M.insert p' True m
-
-      in if | Just b' <- M.lookup x' m' -> (b', x', m', js)
-            | otherwise -> (False, x', m', js)
+      let x' = x+l % c
+          p' = x+p % c
+          m' = M.insert p' (fromMaybe True $ not <$> M.lookup p' m) m
+      in (fromMaybe False $ M.lookup x' m', x', m', js)

@@ -1,4 +1,3 @@
-{-# LANGUAGE MultiWayIf, LambdaCase, MultiParamTypeClasses #-}
 module Piñata where
 
 import qualified Data.Map as M
@@ -36,38 +35,39 @@ instance Enum Piñata where
     where f n = div (n*(n+1)*(n+2)) 6
           g n = div (n*(n+1)      ) 2
 
-  fromEnum (Piñata c l p)
+  fromEnum Piñata{..}
     = f (c-2) + g (l-1) + p
     where f n = div (n*(n+1)*(n+2)) 6
           g n = div (n*(n+1)      ) 2
 
+
+-- vertifyIso' fails when p=0
 instance Reducible Piñata Pogo where
-  reduce (Piñata c l p) = Pogo c p l
-  -- vertifyIso' fails when p=0
+  reduce Piñata{..} = Pogo c p l
 
 
 instance Problem Piñata where
   upperbound = Just . c
 
-  brute Piñata{c=c, l=l, p=p}
+  brute Piñata{..}
     = map (\(_,x,_) -> x)
     . takeWhile (\(b, _, _) -> not b)
     . flip iterate (False, 0, M.empty)
     $ \(b, x, m) ->
-      let x' = mod (x+l) c
-          p' = mod (x+p) c
+      let x' = x+l % c
+          p' = x+p % c
           m' = if | Just _ <- M.lookup p' m -> M.update (pure . not) p' m
                   | otherwise -> M.insert p' True m
 
       in if | Just b' <- M.lookup x' m' -> (b', x', m')
             | otherwise -> (False, x', m')
 
-  clever Piñata{c=c, l=l, p=p}
+  clever Piñata{..}
     | p == l = Right $ Just 1
     | l == 0 = Right Nothing
     | m == 0, p /= 0 = Right Nothing
     | x /= 1, p == 0 = Right . Just $ div c x
-    | mod p o == 0, p >= o = Right . Just $ (d+1) * div (mod p c) o
+    | p % o == 0, p >= o = Right . Just $ (d+1) * div (p%c) o
     | otherwise = Left ()
     where x = gcd c l
           (d,m) = divMod c l

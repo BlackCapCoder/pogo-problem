@@ -1,7 +1,7 @@
 module NSeqPogo' where
 
 import Problem
-import Pogo (Pogo (..))
+import Pogo (Pogo (Pogo))
 import Data.List
 
 
@@ -13,13 +13,13 @@ data NSeqPogo' = NSeqPogo'
   }
 
 instance Problem NSeqPogo' where
-  upperbound (NSeqPogo' c d s n)
+  upperbound NSeqPogo'{..}
     = (*n) <$> upperbound (Pogo c d s)
 
-  brute (NSeqPogo' c d s n)
+  brute NSeqPogo'{..}
     = (*n) <$> brute (Pogo c d s)
 
-  clever (NSeqPogo' c d s n)
+  clever NSeqPogo'{..}
     = fmap (*n) <$> clever (Pogo c d s)
 
   -- brute (NSeqPogo' c d ls)
