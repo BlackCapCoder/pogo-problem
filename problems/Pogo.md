@@ -15,11 +15,3 @@ D = H*L - T*C
 ```
 
 The pogo problem is equivalent to finding the first positive integer solution to the linear equation `lh - ct = d`, which is solvable in `O(log c)` time with the euclidean algorithm.
-
-
-### Decidability
-
-The pogo problem is obviously decidable. All you have to do to prove divergence is to simulate `C` hops. If no solution is found after `C` hops it cannot exist as there are only `C` spots on the circle, and you would have to revisit a spot where you have already been. The pogo stick has no memory or internal state, so if it lands on a spot where it has already been it must be in an infinite loop.
-
-This is true even if there are more than one piece of candy.
-
