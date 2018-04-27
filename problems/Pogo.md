@@ -14,6 +14,8 @@ let T be the number of times passed all the way around the circle
 D = H*L - T*C
 ```
 
+The pogo problem is equivalent to finding the first positive integer solution to the linear equation `lh - ct = d`, which is solvable in `O(log c)` time with the euclidean algorithm.
+
 
 ### Decidability
 
