@@ -32,3 +32,15 @@ instance Problem NSeqPiñata where
           p = map snd js
           sl = sum l
 
+bruteNSP' NSeqPiñata'{..}
+  | l <- length js
+  = last
+  . map (\x -> snd x^._3)
+  . takeWhile (\(i, b) -> not $ b^._1 && i%l == 0 )
+  . zip (cycle [0..l])
+  . flip iterate (False, 0, M.empty, cycle js)
+  $ \(b, x, m, (l,p):js) ->
+    let x' = x+l % c
+        p' = x+p % c
+        m' = M.insert p' (fromMaybe True $ not <$> M.lookup p' m) m
+    in (fromMaybe False $ M.lookup x' m', x', m', js)

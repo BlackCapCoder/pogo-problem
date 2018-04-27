@@ -27,6 +27,7 @@ library:
   - containers
   - arithmoi
   - lens
+  - generic-deriving
   ghc-options:
   - -fno-warn-partial-type-signatures
   default-extensions:
@@ -51,3 +52,17 @@ library:
   - ParallelListComp
   - PartialTypeSignatures
   - TransformListComp
+
+executables:
+  test:
+    source-dirs: test
+    main: Main.hs
+    dependencies:
+    - base
+    - pogo
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N4
+    - -O3
+    - -fllvm

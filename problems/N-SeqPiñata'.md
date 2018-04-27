@@ -7,3 +7,4 @@ This is a more restrictive version of [N-SeqPiñata](N-SeqPiñata.md), and is th
 
 It is equivalent to [Piñata](Piñata.md) where we allow dropping multiple candies in a single jump.
 
+

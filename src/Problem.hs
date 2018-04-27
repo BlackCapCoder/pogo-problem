@@ -4,15 +4,20 @@ module Problem
   , Iso       (..)
 
   , module Utils
+  , module Math.NumberTheory.Primes
   ) where
 
 import Utils
 
+import Math.NumberTheory.Primes
 import Control.Applicative
 import Control.Monad
 import Data.Either    (fromRight)
 import Data.List      (transpose)
 import System.Timeout (timeout)
+
+import Prelude hiding (id, (.))
+import Control.Category
 
 
 class Problem a where
