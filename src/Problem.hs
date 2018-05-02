@@ -18,6 +18,7 @@ import System.Timeout (timeout)
 
 import Prelude hiding (id, (.))
 import Control.Category
+import Data.Semigroup
 
 
 class Problem a where
@@ -30,8 +31,8 @@ class Problem a where
   -- Referance implementation, but limit to upperbound if set
   brute' :: a -> Maybe Number
   brute' a = do
-    u <- upperbound a <|> pure (maxBound-1)
-    let l = length . take (u+1) $ brute a
+    u <- upperbound a <|> error "Upperbound not defined" -- pure (maxBound-1)
+    let l = fromIntegral . length . take (fromIntegral u+1) $ brute a
     guard (l <= u) >> pure l
 
   -- Actually solve it using math and stuff
@@ -47,17 +48,21 @@ newtype Iso a b = Iso { unIso :: a }
 
 class Reducible a b | a -> b where
   reduce :: a -> b
+  reduce = snd . reduce'
+
+  -- The reduction requires a transformation of the final answer
+  reduce' :: a -> (Number -> Number, b)
+  reduce' a = (id, reduce a)
 
 instance (Reducible a b, Problem a, Problem b) => Problem (Iso a b) where
   upperbound (Iso a)
-    = minimum [ upperbound a, upperbound (reduce a) ]
+    = minimum [ upperbound a, upperbound $ reduce a ]
 
   clever (Iso a)
-    = fromRight (clever $ reduce a) $ pure <$> clever a
+    = clever a <> if | (f,x) <- reduce' a -> fmap f <$> clever x
 
-  brute  = brute  . reduce . unIso
-  brute' = brute' . reduce . unIso
-
+  brute  (unIso->reduce'->(f,x)) = f <$> brute  x
+  brute' (unIso->reduce'->(f,x)) = f <$> brute' x
 
 -----------
 
@@ -65,7 +70,7 @@ instance (Reducible a b, Problem a, Problem b) => Problem (Iso a b) where
 -- Vertify that clever == brute, give up after t time
 vertifyClever :: (Problem a) => Number -> a -> IO (Either () Bool)
 vertifyClever t a = do
-  r <- timeout t . return $! brute' a
+  r <- timeout (fromIntegral t) . return $! brute' a
 
   return $ case r of
     Just x -> (==x) <$> clever a

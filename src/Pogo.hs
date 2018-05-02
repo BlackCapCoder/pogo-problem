@@ -32,21 +32,21 @@ D = H*L (modulo C)  another way to express the same, without caring about specif
 
 -}
 
-
-data Pogo = Pogo { c :: Int, d :: Int, l :: Int }
+data Pogo = Pogo { c :: Number, d :: Number, l :: Number }
           deriving (Eq, Ord, Show)
 
 
 instance Enum Pogo where
-  toEnum i
+  toEnum i'
     | Just c <- pred <$> find ((>i).f) [0..]
     , Just l <- find ((>(i-f c)).g) [0..]
     = Pogo (c+2+1) (i - f c - g (l-1)+1) (l+1)
     where f n = div (n*(n+1)*(n+2)) 6
           g n = div (n*(n+1)      ) 2
+          i   = fromIntegral i
 
   fromEnum Pogo{..}
-    = f (c-2-1) + g (l-1-1) + d - 1
+    = fromIntegral $ f (c-2-1) + g (l-1-1) + d - 1
     where f n = div (n*(n+1)*(n+2)) 6
           g n = div (n*(n+1)      ) 2
 
