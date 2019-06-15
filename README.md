@@ -13,7 +13,7 @@ Descriptions of the problems in plain English can be found in the [problems](pro
 
 # Update - Retrospective Summary/Conclusion
 
-My "pogo problem" is a brief textual math problem. I found that any smallfuck program (a bitwise brainfuck derivative) can be turned into an equivallent pogo problem. The pogo problem can be solved in logarithmic time using the extended euclidian algorithm.
+My "pogo problem" is a brief textual math problem. I found that any [smallfuck](https://esolangs.org/wiki/Smallfuck) program (a bitwise brainfuck derivative) can be turned into an equivallent pogo problem. The pogo problem can be solved in logarithmic time using the [extended euclidian algorithm](https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm).
 
 Smallfuck is turing-complete, so the actual problem then, must be the conversion. This is indeed the case. I found a general way to convert any smallfuck problem into a pogo problem, as long as it does not contain loops within loops. This much be what makes fucktoid languages turing-complete.
 
